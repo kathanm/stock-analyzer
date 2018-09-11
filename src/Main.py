@@ -46,4 +46,8 @@ request_url = request_url + '&types=quote,stats'
 r = requests.get(request_url).json()
 parseResults(r)
 
+
+# Sort the list by P/E * P/BV value
+result = sorted(result, key=lambda k: k['value'])
+
 print(result)
