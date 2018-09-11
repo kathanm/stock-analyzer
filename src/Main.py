@@ -1,5 +1,35 @@
 import requests
 
-r = requests.get('https://api.iextrading.com/1.0/stock/aapl/earnings')
-print(r.status_code)
-print(r.json())
+# Get list of symbols supported by IEX and parse it into JSON format
+r = requests.get('https://api.iextrading.com/1.0/ref-data/symbols')
+listStocks = r.json()
+
+# Initialize result list
+result = []
+
+
+def getPBV(symbol):
+    r = requests.get("https://api.iextrading.com/1.0/stock/" + symbol + "/stats").json()
+    return r['priceToBook']
+
+def getPE(symbol):
+    r = requests.get("https://api.iextrading.com/1.0/stock/" + symbol + "/book").json()
+    return r['quote']['peRatio']
+
+# Iterate through each stock and calculate the P/E * P/BV value
+# If it is below 22.5, add it to result list
+for stock in listStocks:
+    stockSymbol = stock['symbol']
+    print ('starting execution for ' + stockSymbol)
+    stockName = stock["name"]
+    stockPE = getPE(stockSymbol)
+    if stockPE is None:
+        continue
+    stockPBV = getPBV(stockSymbol)
+    if stockPBV is None:
+        continue
+    val = stockPE * stockPBV
+    if val <= 22.5:
+        result.append({"symbol": stockSymbol, "name": stockName, "val": val})
+
+print(result)
