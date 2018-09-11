@@ -38,7 +38,7 @@ for stock in listStocks:
         r = requests.get(request_url).json()
         parseResults(r)
         count = 0
-        request_url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols='
+        request_url = baseURL + '/stock/market/batch?symbols='
     request_url = request_url + stock['symbol'] + ','
     count += 1
 
