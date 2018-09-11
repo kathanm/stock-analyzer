@@ -12,10 +12,10 @@ def parseResults(json):
     for stock_info in json:
         stock_info = json[stock_info]
         pe = stock_info['quote']['peRatio']
-        if pe is None:
+        if pe is None or pe < 0:
             continue
         pbv = stock_info['stats']['priceToBook']
-        if pbv is None:
+        if pbv is None or pbv < 0:
             continue
         if pe * pbv <= 22.5:
             result.append({'symbol': stock_info['quote']['symbol'],
@@ -49,5 +49,5 @@ parseResults(r)
 
 # Sort the list by P/E * P/BV value
 result = sorted(result, key=lambda k: k['value'])
-
-print(result)
+for stock in result:
+    print(stock)
